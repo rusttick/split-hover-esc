@@ -1,76 +1,33 @@
-# XXX BROKEN XXX GO AWAY! XXX
+# Driver Hoverboard Motors
 
-Repurpose Split Hoverboard PCBs as Speed Controllers for PMSMs and BLDCs
+Drive hoverboard motors using new driver boards from aliexpress.
 
-
-# Goals
-
-1. drive a hoverboard motor
-    a. with the free controllers that came with the hoverboards
-    b. with high torque at low speed
-2. find/assemble a framework to write portable rust for mcu's in general
-
-
-# Environment
-
-Follow the existing guides to setup an embedded development environment in rust:
-
-- the demo project template in the book is deprecated by https://github.com/knurling-rs/app-template
-- otherwise book: https://docs.rust-embedded.org/book/intro/install.html
-- embassy hello world: https://github.com/embassy-rs/embassy/blob/main/examples/stm32f1/src/bin/blinky.rs
-- embassy... something about sleep requires "probe-rs --connect-under-reset" for stm32f103
-  make sure your st link has a working nrst pin. mine did not.
-  https://chauquest.com/index.php/article/why-your-st-link-v2-reset-doesnt-work-and-how-to-fix-it/
-
-# Build
-
-```
-git clone https://github.com/rusttick/split-hover-esc.git
-cargo rb hello
-```
-
+ - Buy MM32SPIN05 driver pairs on aliexpress
+ - use pre-built binary from https://gitlab.com/ailife8881/Hoverboard-Firmware-Hack-Gen2.x-MM32
+   HoverboardOutputMM32SPIN05.hex downloaded from discord posted on 5/3/2024
+ - flash like  https://github.com/RoboDurden/Hoverboard-Firmware-Hack-Gen2.x
+ - control like https://github.com/reed-dan/hoverboard_hack_esp32_manualspeed
+ - Insert modbus between for more robust serial communication
 
 # TODO
 
-- [x] setup a real test environment with STM32F103C8T6: stm32f1xx-hal blinky.rs example
-- [x] blink the led with https://github.com/embassy-rs/embassy/blob/main/examples/stm32f1/src/bin/blinky.rs
-- [ ] add button push with https://github.com/theembeddedrustacean/learn-stm32f4-rs
-- [ ] blink in the abstract with a separate mcu specific implementation
-- [ ] abstract blink esp board
-- [ ] abstract blink rp2040 board
-- [ ] abstract blink arduino decimila board
-- [ ] abstract blink mm32spin05pf
-- [ ] abstract blink mm32spin27pf
-- [ ] abstract blink gd32e230c8t6
-- [ ] setup qemu to emulate some/all of these boards????
-- [ ] add more emulated and real boards and get them all blinking
-- [ ] read other projects and tutorials to determine how to organize portable projects
-- [ ] learn how to transfer code to a library to meet rust ecosystem standards
+- [ ] download firmware
+- [ ] try to remember and document the flash setup and flash procedures
+
+- [ ] try to use the serial interface for that board to control motor
+- [ ] implement the serial motor control interface in rust on rp2040
+
+# Flash rp2040
+
+how to flash this project onto rp2040 for controlling many hoverboard motors
 
 
-# References
+# Flash MM32SPIN05
 
-- https://github.com/RoboDurden/Hoverboard-Firmware-Hack-Gen2.x
-- https://rust-book.cs.brown.edu ... instead of... https://doc.rust-lang.org/book/
-- https://docs.rust-embedded.org/book/index.html
-- https://doc.rust-lang.org/stable/rust-by-example/
-- https://tourofrust.com
-- embassy-boot: https://blog.drogue.io/firmware-updates-part-1/
-- https://github.com/cmsis-svd/cmsis-svd-data/tree/main/data
+how to download and flash the pre-built binary onto an MM32SPIN05
 
 
 
-github search for rust FOC projects:
-
-- needs encoder: https://github.com/calebfletcher/foc
-- https://github.com/Ben-PH/SimpleFOC-rs
-- embassy HAL: https://github.com/qff233/FOC
-- https://github.com/kisy/toyfoc
-
-
-MCU HAL: GD32E230C8T6, mm32spin27pf, mm32spin05pf, fortior fuebk1, f130k6ce82972
-
-- https://github.com/gd32-rust/gd32-rs
 
 
 
@@ -100,26 +57,12 @@ MCU HAL: GD32E230C8T6, mm32spin27pf, mm32spin05pf, fortior fuebk1, f130k6ce82972
 * you burned some boards and stlink v2 (maybe.. they might still be good, not sure)
 * you then decided to order some known-good hoverboard pcb from aliexpress
 * now you had new firmware on one hoverboard pcb, but not yet control from another mcu
-* you continued reading the firmware hack code and got frustrated
-* mostly with the propriatary IDE requirements and the portability techniques in the project
-* so you watched videos about open source embedded development on linux
-* and that's when rust for embedded development was mentioned
-* so you made this github repo to start evaluating rust for hoverboard firmware
-* a week later,
-  you were still trying to understand how to use the abstract embedded-hal
-  without directly using the lower level hal implementation like stm321xx-hal
-  and were wondering why there was no recent activity in these projects
-  when you stumbled onto embassy-hal and the embassy project.
-* Can you find an abstraction that works and do tests with several mcu????
+* Now you can't remember why, but for some reason you abandoned the serial control interface
+  and decided to try rebuilding the whole MM32 project in rust.
+* then after a month or so, you decided that wouldn't work
+* so now you're back working on the serial interface to the pre-built binary
 
-* the rust Peripheral Access Crate (PAC)
-** has the addresses for all the peripherals of an MCU
-** Common Microcontroller Software Interface Standard - System View Description (CMSIS-SVD)
-* rust Hardware Abstraction Layer (HAL)
-* Board Support Package??
-** thin layer on HAL, but knows more about some specific boards
-* svd2rust ?????? need to make a PAC for mm32spin*
-* make a board support package for each board that doesn't already have one???
 
-* cargo: check, build, run, build --release
+
+
 
