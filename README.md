@@ -33,6 +33,15 @@ Drive hoverboard motors using new driver boards from aliexpress.
 - [ ] decide on running voltage and mosfet cooling requirements
 
 
+## Flash rp2040
+
+how to flash this project onto rp2040 for controlling many hoverboard motors
+
+
+## Flash Razor
+
+Instructions for [Flashing the Razor board](doc/flash-razor.md).
+
 
 ## RS485 serial bus
  - serial to rs485 converters running at the default 19200 serial bus speed
@@ -44,141 +53,6 @@ Drive hoverboard motors using new driver boards from aliexpress.
  - there should not be any protocol changes required. the rs485 chips have auto flow control
 
 
-
-
-
-
-
-## Flash rp2040
-
-how to flash this project onto rp2040 for controlling many hoverboard motors
-
-
-
-## Hardware Connect Razor board:
-
- - motor phases
- - hall leads and the white wire??
- - red power button on master... what to do on slave????
- - blue serial interface to FTDI USB to serial interface with 3.3v jumper
-   board [G, T2, R2] to FTDI [SGND, RX, TX] ... TX/RX cross
- - Solder on the header pins for connection to ST-Link V2:
-   Board [DIO, CLK, 5V, G] to ST [SWDIO, SWCLK, 3.3V, GND]
-   Board [RST] must connect to GND because the generic ST-link v2 doesn't have reset connected correctly for this MCU
- - I added a JST connector and toggle switch between board Reset and board Ground.
-
-
-## Flash and Configure Razor Board
-
-### 0. Plug in the st-link v2 (not connected to mcu) and Install pyocd with support for mm32spin05pf
-
-```bash
-pip install pyocd
-pyocd pack --update
-pyocd pack install mm32spin05pf
-pyocd list --targets | grep -i mm32
-pyocd list  # should show STM32 STLink
-```
-
-### 1. Leave power off. Motor connections don't matter for flashing, but should be connected on pin finder boot.
-### 2. Connect ST-Link V2 and Reset to Ground JST connector
-### 3. Toggle switch to connect the board RST pin to ground
-### 4. get ready to quickly toggle the RST switch...
-### 5. Erase first:
-
-```bash
-pyocd erase -t mm32spin05pf --chip
-```
-
-### 6. Then flash pin finder without running the code:
-
-```bash
-pyocd load --no-reset --target mm32spin05pf util/HoverboardOutputMM32SPIN05_pinfinder_5_3_24.hex
-```
-
-### 7. Disconnect the ST Link. leave the FTDI serial DISconnected as well.
-
-### 8. `First boot` power button detection: Press and release the power button and wait 5 to 10 seconds
-
-### 9. `Second boot` and Serial pin assignment: press and release the power button and then short tx and rx together for about 1 to 2 seconds ???
-
-### 10. Connect serial and run pinfinder:
-
-```bash
-screen /dev/cu.usbserial-A5069RR4 19200
-```
-
-### 11. Pin Finder Configuration Values (pinstorage[64])
-
-GPIO Pin Assignments (indices 0-31)
-
-  | Index | Name     | Description                               | Setting   |
-  |       |          |                                           |           |
-  |-------|----------|-------------------------------------------|-----------|
-  | 0     | halla    | Hall sensor A input                       | 26 (PC13) |
-  | 1     | hallb    | Hall sensor B input                       | 27 (PC14) |
-  | 2     | hallc    | Hall sensor C input                       | 28 (PC15) |
-  | 3     | ledr     | Red LED output                            | 31 (PD2)  |
-  | 4     | ledg     | Green LED output                          | 9 (PA12)  |
-  | 5     | ledb     | Blue LED output (orange on some boards)   |           |
-  | 6     | ledu     | Upper/auxiliary LED output                |           |
-  | 7     | ledd     | Lower/auxiliary LED output                |           |
-  | 8     | buzzer   | Buzzer/beeper output                      | 22 (PB9)  |
-  | 9     | button   | Power button input                        | 18 (PB5)  |
-  | 10    | latch    | Self-hold/latch pin (keeps board powered) | 15 (PB2)  |
-  | 11    | charge   | Charger detection input                   |           |
-  | 12    | vbat     | Battery voltage ADC input                 | 14 (PB1)  |
-  | 13    | itotal   | Total current sense ADC input             |           |
-  | 14    | tx       | UART TX output                            | 19 (PB6)  |
-  | 15    | rx       | UART RX input                             | 17(PB4)   |
-  | 16    | iphasea  | Phase A current sense (reserved)          |           |
-  | 17    | iphaseb  | Phase B current sense (reserved)          |           |
-  | 18-22 | reserved | Reserved for future use                   |           |
-  | 23    | ocp      | Over-current protection input             |           |
-  | 24    | ocpref   | OCP reference voltage output              |           |
-  | 25    | irl      | IR sensor left (reserved)                 |           |
-  | 26    | irr      | IR sensor right (reserved)                |           |
-
-
-System Configuration (indices 32-47)
-
-Values store numeric settings, not pin indices.
-
-  | Index | Name          | Default | Description                                       | Setting             |
-  |-------|---------------|---------|---------------------------------------------------|---------------------|
-  | 32    | magicnum      | 0xDCAB  | EEPROM validation magic number                    |                     |
-  | 33    | vbatdivider   | 31      | Battery voltage divider ratio                     |                     |
-  | 34    | itotaldivider | 250     | Current sense divider/scaling                     |                     |
-  | 35    | reserved      | -       | (iphase divider, unused)                          |                     |
-  | 36    | baud          | 19200   | UART baud rate                                    |                     |
-  | 37    | pwmres        | 8192    | PWM resolution (higher = lower freq)              |                     |
-  | 38    | slaveid       | 1       | Board address for multi-board comms (0-255)       |                     |
-  | 39    | windings      | 30      | Motor winding count for speed calc                |                     |
-  | 40    | invlowside    | 0       | Invert low-side gate drive (0=normal, 1=inverted) |                     |
-  | 41    | softocp       | 10      | Software over-current limit threshold             |                     |
-  | 42    | hardocp       | 300     | Hardware AWDG (analog watchdog) limit             |                     |
-  | 43    | reserved      | -       | (UART mode, unused)                               | 1(probably default) |
-  | 44    | drivemode     | 1       | Motor drive mode selection                        | XXX                 |
-  | 45    | batfull       | 42000   | Battery full voltage (mV)                         |                     |
-  | 46    | batempty      | 32000   | Battery empty voltage (mV)                        |                     |
-  | 47    | timeout       | 1000    | Serial timeout (ms)                               |                     |
-  | 48-63 | reserved      | 0       | Reserved for future use                           |                     |
-
-
-### 12. test and save pinfinder settings
-
-
-
-
-### 13. then flash main:
-
-```bash
-pyocd load -t mm32spin05pf util/HoverboardOutputMM32SPIN05_main_5_1_24.hex
-```
-
-### 14. and test with util/motor_control.py  ????
-
-????
 
 
 
