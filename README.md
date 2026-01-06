@@ -36,11 +36,12 @@
 Instructions for [Flashing the Razor board](doc/flash-razor.md).
 
 
-![Pico W Pinout](doc/pico-w-pinout.png)
-
 ## Flash rp2040
 
-how to flash this project onto rp2040 for controlling many hoverboard motors
+how to flash this project onto rp2040 for controlling many hoverboard motors... ???
+
+![Pico W Pinout](doc/pico-w-pinout.png)
+
 
 
 ## RS485 serial bus
