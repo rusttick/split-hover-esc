@@ -1,7 +1,5 @@
 ![Razor board finding pins](doc/razor-test.jpeg)
 
-![Pico W Pinout](doc/pico-w-pinout.png)
-
 
 # Drive hoverboard motors using new driver boards from aliexpress.
 
@@ -9,7 +7,6 @@
  - download binary of https://gitlab.com/ailife8881/Hoverboard-Firmware-Hack-Gen2.x-MM32 from discord
  - flash like  https://github.com/RoboDurden/Hoverboard-Firmware-Hack-Gen2.x
  - control like https://github.com/reed-dan/hoverboard_hack_esp32_manualspeed
-
 
 
 ## TODO
@@ -21,14 +18,11 @@
 - [ ] complete pin finder and flash main
 - [ ] motor_control.py spins the motor
 
-
 - [ ] speed1.rs spins the motor
 - [ ] flash and run pinfinder on the slave. motor_control.py on slave. speed1.rs on slave
 - [ ] speed1.rs over rs485 bridge at 19200
 - [ ] get 2 boards with motors all talking over rs485 taking speed commands from rp2040
 - [ ] get 4 boards with motors all talking over rs485 taking speed commands from rp2040
-
-
 
 - [ ] disable master power button and deal with latch????
 - [ ] xt30 power connectors
@@ -37,14 +31,16 @@
 - [ ] decide on running voltage and mosfet cooling requirements
 
 
-## Flash rp2040
-
-how to flash this project onto rp2040 for controlling many hoverboard motors
-
-
 ## Flash Razor
 
 Instructions for [Flashing the Razor board](doc/flash-razor.md).
+
+
+![Pico W Pinout](doc/pico-w-pinout.png)
+
+## Flash rp2040
+
+how to flash this project onto rp2040 for controlling many hoverboard motors
 
 
 ## RS485 serial bus
