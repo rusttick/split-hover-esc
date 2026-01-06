@@ -70,7 +70,7 @@ how to flash this project onto rp2040 for controlling many hoverboard motors
 
 ## Flash and Configure Razor Board
 
-0. Plug in the st-link v2 (not connected to mcu) and Install pyocd with support for mm32spin05pf
+### 0. Plug in the st-link v2 (not connected to mcu) and Install pyocd with support for mm32spin05pf
 
 ```bash
 pip install pyocd
@@ -80,35 +80,35 @@ pyocd list --targets | grep -i mm32
 pyocd list  # should show STM32 STLink
 ```
 
-1. Leave power off. Motor connections don't matter for flashing, but should be connected on pin finder boot.
-2. Connect ST-Link V2 and Reset to Ground JST connector
-3. Toggle switch to connect the board RST pin to ground
-4. get ready to quickly toggle the RST switch...
-5. Erase first:
+### 1. Leave power off. Motor connections don't matter for flashing, but should be connected on pin finder boot.
+### 2. Connect ST-Link V2 and Reset to Ground JST connector
+### 3. Toggle switch to connect the board RST pin to ground
+### 4. get ready to quickly toggle the RST switch...
+### 5. Erase first:
 
 ```bash
 pyocd erase -t mm32spin05pf --chip
 ```
 
-6. Then flash pin finder without running the code:
+### 6. Then flash pin finder without running the code:
 
 ```bash
 pyocd load --no-reset --target mm32spin05pf util/HoverboardOutputMM32SPIN05_pinfinder_5_3_24.hex
 ```
 
-7. Disconnect the ST Link. leave the FTDI serial DISconnected as well.
+### 7. Disconnect the ST Link. leave the FTDI serial DISconnected as well.
 
-8. `First boot` power button detection: Press and release the power button and wait 5 to 10 seconds
+### 8. `First boot` power button detection: Press and release the power button and wait 5 to 10 seconds
 
-9. `Second boot` and Serial pin assignment: press and release the power button and then short tx and rx together for about 1 to 2 seconds ???
+### 9. `Second boot` and Serial pin assignment: press and release the power button and then short tx and rx together for about 1 to 2 seconds ???
 
-10. Connect serial and run pinfinder:
+### 10. Connect serial and run pinfinder:
 
 ```bash
 screen /dev/cu.usbserial-A5069RR4 19200
 ```
 
-11. Pin Finder Configuration Values (pinstorage[64])
+### 11. Pin Finder Configuration Values (pinstorage[64])
 
 GPIO Pin Assignments (indices 0-31)
 
@@ -165,27 +165,20 @@ Values store numeric settings, not pin indices.
   | 48-63 | reserved      | 0       | Reserved for future use                           |                     |
 
 
-12. test and save pinfinder settings
+### 12. test and save pinfinder settings
 
 
 
 
-13. then flash main:
+### 13. then flash main:
 
 ```bash
 pyocd load -t mm32spin05pf util/HoverboardOutputMM32SPIN05_main_5_1_24.hex
 ```
 
-14. and test with util/motor_control.py  ????
+### 14. and test with util/motor_control.py  ????
 
-
-
-
-
-
-
-
-
+????
 
 
 
