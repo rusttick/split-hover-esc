@@ -45,6 +45,10 @@ how to flash this project onto rp2040 for controlling many hoverboard motors... 
 
 
 ## RS485 serial bus
+
+![RS485 to serial module](doc/rs485.png)
+
+
  - serial to rs485 converters running at the default 19200 serial bus speed
  - daisy chain wire topology required
  - short RO jumper to enable 120ohm termination at both ends of the chain
