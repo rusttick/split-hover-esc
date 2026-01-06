@@ -1,6 +1,9 @@
-# Driver Hoverboard Motors
+![Razor board finding pins](doc/razor-test.jpeg)
 
-Drive hoverboard motors using new driver boards from aliexpress.
+![Pico W Pinout](doc/pico-w-pinout.png)
+
+
+# Drive hoverboard motors using new driver boards from aliexpress.
 
  - Buy MM32SPIN05 driver pairs on aliexpress
  - download binary of https://gitlab.com/ailife8881/Hoverboard-Firmware-Hack-Gen2.x-MM32 from discord
@@ -10,6 +13,7 @@ Drive hoverboard motors using new driver boards from aliexpress.
 
 
 ## TODO
+
 - [x] pinfinder needs higher voltage to find hall pins
 - [x] 48v didn't work... swap out hall cables and double check pinout and try again
       with correct pinout, 24v worked!
@@ -51,10 +55,6 @@ Instructions for [Flashing the Razor board](doc/flash-razor.md).
  - contains: https://www.ti.com/lit/ds/symlink/iso7741.pdf
  - and MAX485CSA+  https://www.analog.com/media/en/technical-documentation/data-sheets/max1487-max491.pdf
  - there should not be any protocol changes required. the rs485 chips have auto flow control
-
-
-
-
 
 
 ## Notes to my future self in chronological order
