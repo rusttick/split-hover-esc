@@ -9,7 +9,7 @@ This image is copied from https://github.com/RoboDurden/Hoverboard-Firmware-Hack
 
 ## XXX Slave differences:
 
-Because the slave gets power from the serial port,
+Because the slave gets power from the blue JST connector (that also contains the serial tx/rx pins),
 The first boot to pin finder must be powered powered from ST-LINK
 
 1. jumper tx/rx,
@@ -17,9 +17,6 @@ The first boot to pin finder must be powered powered from ST-LINK
 3. remove jumper
 4. unplug st-link
 5. plug in serial adapter and proceed with pinfinder
-
-
-
 
 
 ## Power button
