@@ -113,16 +113,17 @@ The first thing pin finder does is detect the power button on first boot.
 
  - press and release the power button and wait 5 seconds.
 
-For Slave, connect power and short serial tx rx on and off for a while and hope it works????? XXX
+Slave skips this step and goes to Second Boot.
 
 
 ## 8. Second Boot
 
 When pin finder boots for the second time, it will try to find the Serial TX and RX pins.
 
+ - short tx and rx together into a loopback configuration
+   I recommend wiring a JST connector (aka jumper) for this
  - press and release the power button
- - quickly short tx and rx together for about 1 second.
-   I made a JST connector for this
+ - wait a few seconds and remove the loopback jumper
  - at this point, I disconnect power and FTDI in preparation for a repeatable way to connect to pin finder
 
 ## 9. Connect serial
@@ -140,11 +141,6 @@ screen /dev/cu.usbserial-A5069RR4 19200
 
 
 ## 10. Pin Finder Configuration Values (pinstorage[64])
-
-Notes:
- - Skip current monitoring and over-current protections ???
-
-
 
 GPIO Pin Assignments (indices 0-31):
 
@@ -227,12 +223,6 @@ Drive mode descriptions:
   | 6     | FOC_TORQUE | Field-oriented control, torque (current) control      |
 
 
-
-
-
-
-
-
 ## 12. test and save pinfinder settings
 
 run through all the available tests... especially motor rotation test
@@ -243,17 +233,19 @@ run through all the available tests... especially motor rotation test
  - remove the FTDI to serial
  - install the ST-LINK V2
  - disconnect power
- - run pyocd load
+ - run pyocd to load main
 
 ```bash
 pyocd load --no-reset -t mm32spin05pf util/HoverboardOutputMM32SPIN05_main_5_1_24.hex
 ```
 
 
-## 14. and test with util/motor_control.py  ????
+## 14. and test with util/motor_control.py
 
- - ????
+motor_control.py is a limited implementation of the uart bus protocol master
 
-
+```bash
+./util/motor_control.py --speed 500 --slave 2 /dev/cu.usbserial-A5069RR4
+```
 
 
