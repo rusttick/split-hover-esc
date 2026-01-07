@@ -1,13 +1,13 @@
 ![Razor board finding pins](doc/razor-test.jpeg)
 
 
-# Drive hoverboard motors using new driver boards from aliexpress.
+# Drive Pairs of hoverboard motors using Pairs of new driver boards from aliexpress.
 
  - Buy MM32SPIN05 driver pairs on aliexpress
  - download binary of https://gitlab.com/ailife8881/Hoverboard-Firmware-Hack-Gen2.x-MM32 from discord
  - flash like  https://github.com/RoboDurden/Hoverboard-Firmware-Hack-Gen2.x
  - control like https://github.com/reed-dan/hoverboard_hack_esp32_manualspeed
-
+ - note: slave boards don't have the 15v buck converter, so they need that wired over from master.
 
 ## TODO
 
@@ -15,14 +15,24 @@
 - [x] 48v didn't work... swap out hall cables and double check pinout and try again
       with correct pinout, 24v worked!
 - [x] find a suitable led to connect: 3 pin 12, R, G
-- [ ] complete pin finder and flash main
-- [ ] motor_control.py spins the motor
+- [x] complete pin finder and flash main
+- [x] motor_control.py spins the motor
+
+- [x] pin find slave board XXX requires 15v power from main board or outside
+- [x] load main on slave board
+- [x] motor_control.py slave board XXX couldn't do speed 1000 for some reason... also wasn't sounding great
+
 
 - [ ] speed1.rs spins the motor
-- [ ] flash and run pinfinder on the slave. motor_control.py on slave. speed1.rs on slave
 - [ ] speed1.rs over rs485 bridge at 19200
 - [ ] get 2 boards with motors all talking over rs485 taking speed commands from rp2040
 - [ ] get 4 boards with motors all talking over rs485 taking speed commands from rp2040
+
+
+- [ ] start listing the safety checks rp2040 can do: speed change limits, measure and limit battery current?
+
+
+- [ ] test pin 7 (PA7) as current sens pin on master!!
 
 - [ ] disable master power button and deal with latch????
 - [ ] xt30 power connectors
@@ -87,7 +97,8 @@ how to flash this project onto rp2040 for controlling many hoverboard motors... 
   and decided to try rebuilding the whole MM32 project in rust.
 * then after a month or so, you decided that wouldn't work
 * so now you're back working on the serial interface to the pre-built binary
-
+* pin finder worked well so you bought a bunch of the connectors needed to make flashing and using the boards easier
+* testing continues...
 
 
 
