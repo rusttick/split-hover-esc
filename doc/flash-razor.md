@@ -2,7 +2,7 @@
 
 This image is copied from https://github.com/RoboDurden/Hoverboard-Firmware-Hack-Gen2.x/issues/59
 
-![RoboDurden trace of the razor board](doc/robodurden-issue-59.png)
+![RoboDurden trace of the razor board](robodurden-issue-59.png)
 
 
 # Flash and Configure Razor Board
