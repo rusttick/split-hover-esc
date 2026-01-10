@@ -1,5 +1,5 @@
 [target.thumbv6m-none-eabi]
-runner = "probe-rs run --chip RP2040 --speed 500"
+runner = "probe-rs run --chip RP2040 --speed 100"
 
 # Use flip-link to catch stack overflows as hard faults
 linker = "flip-link"

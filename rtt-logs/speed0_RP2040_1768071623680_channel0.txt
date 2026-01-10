@@ -1,0 +1,67 @@
+[1m[[32mINFO [0m[1m][0m === Dual Slave Zero Speed Test ===
+[1m[[32mINFO [0m[1m][0m Baud: 19200 | Slaves: 1, 2 | Speed: 0
+[1m[[32mINFO [0m[1m][0m Starting dual slave test loop...
+
+[1m[[32mINFO [0m[1m][0m Cycle 31: 30 cycles/sec
+
+[1m[[32mINFO [0m[1m][0m Cycle 62: 30 cycles/sec
+
+[1m[[32mINFO [0m[1m][0m Cycle 93: 30 cycles/sec
+
+[1m[[32mINFO [0m[1m][0m Cycle 124: 30 cycles/sec
+
+[1m[[32mINFO [0m[1m][0m Cycle 154: 29 cycles/sec
+
+[1m[[32mINFO [0m[1m][0m Cycle 184: 30 cycles/sec
+
+[1m[[32mINFO [0m[1m][0m Cycle 214: 30 cycles/sec
+
+[1m[[32mINFO [0m[1m][0m Cycle 244: 30 cycles/sec
+
+[1m[[32mINFO [0m[1m][0m Cycle 275: 30 cycles/sec
+
+[1m[[32mINFO [0m[1m][0m Cycle 305: 30 cycles/sec
+
+[1m[[32mINFO [0m[1m][0m Cycle 336: 30 cycles/sec
+
+[1m[[32mINFO [0m[1m][0m Cycle 366: 30 cycles/sec
+
+[1m[[32mINFO [0m[1m][0m Cycle 396: 30 cycles/sec
+
+[1m[[32mINFO [0m[1m][0m Cycle 427: 30 cycles/sec
+
+[1m[[32mINFO [0m[1m][0m Cycle 457: 30 cycles/sec
+
+[1m[[32mINFO [0m[1m][0m Cycle 488: 30 cycles/sec
+
+[1m[[32mINFO [0m[1m][0m Cycle 518: 30 cycles/sec
+
+[1m[[32mINFO [0m[1m][0m Cycle 548: 30 cycles/sec
+
+[1m[[32mINFO [0m[1m][0m Cycle 578: 30 cycles/sec
+
+[1m[[32mINFO [0m[1m][0m Cycle 609: 30 cycles/sec
+
+[1m[[32mINFO [0m[1m][0m Cycle 640: 30 cycles/sec
+
+[1m[[33mWARN [0m[1m][0m s2: timeout
+[1m[[32mINFO [0m[1m][0m Cycle 663: 18 cycles/sec
+
+[1m[[32mINFO [0m[1m][0m Cycle 694: 30 cycles/sec
+
+[1m[[32mINFO [0m[1m][0m Cycle 725: 30 cycles/sec
+
+[1m[[32mINFO [0m[1m][0m Cycle 755: 30 cycles/sec
+
+[1m[[32mINFO [0m[1m][0m Cycle 785: 30 cycles/sec
+
+[1m[[32mINFO [0m[1m][0m Cycle 816: 30 cycles/sec
+
+[1m[[32mINFO [0m[1m][0m Cycle 847: 29 cycles/sec
+
+[1m[[32mINFO [0m[1m][0m Cycle 877: 29 cycles/sec
+
+[1m[[32mINFO [0m[1m][0m Cycle 908: 30 cycles/sec
+
+[1m[[32mINFO [0m[1m][0m Cycle 939: 30 cycles/sec
+

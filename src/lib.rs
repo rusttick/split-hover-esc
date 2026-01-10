@@ -2,11 +2,12 @@
 #![no_std]
 
 use embassy_rp::bind_interrupts;
-use embassy_rp::peripherals::UART0;
+use embassy_rp::peripherals::{UART0, UART1};
 use embassy_rp::uart::InterruptHandler as UartInterruptHandler;
 
 bind_interrupts!(pub struct Irqs {
     UART0_IRQ => UartInterruptHandler<UART0>;
+    UART1_IRQ => UartInterruptHandler<UART1>;
 });
 
 /// Remote UART Bus protocol constants

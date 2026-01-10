@@ -14,13 +14,17 @@ embassy-rp = { version = "0.9.0", features = ["time-driver", "critical-section-i
 embassy-time = "0.5.0"
 embassy-sync = "0.7.0"
 
+# WiFi support for Pico W (CYW43439)
+cyw43 = { version = "0.6.0", features = ["defmt"] }
+cyw43-pio = { version = "0.9.0", features = ["defmt"] }
+
 # ARM Cortex-M support
 cortex-m = "0.7.7"
 cortex-m-rt = "0.7.5"
 
 # Debugging & logging
 defmt = "1.0.1"
-defmt-rtt = "1.0"
+rtt-target = { version = "0.6", features = ["defmt"] }
 panic-probe = { version = "1.0", features = ["print-defmt"] }
 
 # Utilities

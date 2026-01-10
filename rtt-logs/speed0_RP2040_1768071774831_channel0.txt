@@ -1,0 +1,49 @@
+[1m[[32mINFO [0m[1m][0m === Dual Slave Zero Speed Test ===
+[1m[[32mINFO [0m[1m][0m Baud: 19200 | Slaves: 1, 2 | Speed: 0
+[1m[[32mINFO [0m[1m][0m Starting dual slave test loop...
+
+[1m[[32mINFO [0m[1m][0m Cycle 31: 30 cps, s1=13ms s2=13ms
+
+[1m[[32mINFO [0m[1m][0m Cycle 62: 30 cps, s1=13ms s2=13ms
+
+[1m[[32mINFO [0m[1m][0m Cycle 92: 29 cps, s1=13ms s2=13ms
+
+[1m[[32mINFO [0m[1m][0m Cycle 123: 30 cps, s1=13ms s2=13ms
+
+[1m[[32mINFO [0m[1m][0m Cycle 153: 29 cps, s1=13ms s2=13ms
+
+[1m[[33mWARN [0m[1m][0m s2: timeout
+[1m[[32mINFO [0m[1m][0m Cycle 182: 27 cps, s1=13ms s2=16ms
+
+[1m[[32mINFO [0m[1m][0m Cycle 213: 30 cps, s1=13ms s2=13ms
+
+[1m[[32mINFO [0m[1m][0m Cycle 243: 30 cps, s1=13ms s2=13ms
+
+[1m[[32mINFO [0m[1m][0m Cycle 274: 30 cps, s1=13ms s2=13ms
+
+[1m[[32mINFO [0m[1m][0m Cycle 305: 30 cps, s1=13ms s2=13ms
+
+[1m[[32mINFO [0m[1m][0m Cycle 335: 29 cps, s1=13ms s2=13ms
+
+[1m[[32mINFO [0m[1m][0m Cycle 366: 30 cps, s1=13ms s2=13ms
+
+[1m[[32mINFO [0m[1m][0m Cycle 396: 29 cps, s1=13ms s2=13ms
+
+[1m[[33mWARN [0m[1m][0m s2: timeout
+
+[1m[[32mINFO [0m[1m][0m Cycle 424: 27 cps, s1=12ms s2=16ms
+
+[1m[[32mINFO [0m[1m][0m Cycle 455: 30 cps, s1=13ms s2=13ms
+
+[1m[[32mINFO [0m[1m][0m Cycle 485: 29 cps, s1=13ms s2=13ms
+
+[1m[[32mINFO [0m[1m][0m Cycle 516: 30 cps, s1=13ms s2=13ms
+
+[1m[[32mINFO [0m[1m][0m Cycle 547: 30 cps, s1=13ms s2=13ms
+
+[1m[[32mINFO [0m[1m][0m Cycle 577: 29 cps, s1=13ms s2=13ms
+
+[1m[[32mINFO [0m[1m][0m Cycle 607: 30 cps, s1=13ms s2=13ms
+
+[1m[[32mINFO [0m[1m][0m Cycle 638: 29 cps, s1=13ms s2=13ms
+

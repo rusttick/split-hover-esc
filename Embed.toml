@@ -1,0 +1,14 @@
+[default.general]
+chip = "RP2040"
+
+[default.rtt]
+enabled = true
+timeout = 3000
+log_enabled = true
+log_path = "./rtt-logs"
+
+[default.reset]
+halt_afterwards = false
+
+[default.probe]
+speed = 100
