@@ -21,27 +21,26 @@
 - [x] pin find slave board XXX requires 15v power from main board or outside
 - [x] load main on slave board
 - [x] motor_control.py slave board XXX couldn't do speed 1000 for some reason... also wasn't sounding great
-- [ ] PA7 current sensor setting did NOT work on master!
+- [x] PA7 current sensor setting did NOT work on master either!
+- [x] wire up rp2040 for serial speed control with rs485 adapters... works ok for quite some time, but has crashed
+- [x] speed0 sends speed=0 30 times per second over rs485 adapters. slave 2 times out occassionally... good enough
 
+- [ ] add watchdog to main speed sending loop
 
+- [ ] update speed1.rs with findings from speed0 and then spin the motor!
 
-- [ ] wire up rp2040 for serial speed control
-
-
-
-
-- [ ] speed1.rs spins the motor
-
-
-
-- [ ] speed1.rs over rs485 bridge at 19200
+- [ ] test the RC receiver logging from rp2040
 
 
 
 
 
-- [ ] get 2 boards with motors all talking over rs485 taking speed commands from rp2040
-- [ ] get 4 boards with motors all talking over rs485 taking speed commands from rp2040
+
+
+- [ ] send fake telemetry to qgroundcontrol from a local python app
+- [ ] add wifi to speed1.rs
+
+
 
 
 - [ ] start listing the safety checks rp2040 can do: speed change limits, measure and limit battery current?
@@ -51,7 +50,7 @@
 
 - [ ] disable master power button and deal with latch????
 - [ ] xt30 power connectors
-- [ ] test RC
+
 - [ ] determine if wifi control will be adequate or if the RC protocol is required.
 - [ ] decide on running voltage and mosfet cooling requirements
 
