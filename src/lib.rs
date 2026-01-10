@@ -63,10 +63,10 @@ pub mod protocol {
         msg[4] = ((speed >> 8) & 0xFF) as u8;  // speed high byte
         msg[5] = state;
 
-        // CRC over first 6 bytes, stored big-endian
+        // CRC over first 6 bytes, stored little-endian (firmware expects low byte first)
         let crc = calc_crc16(&msg[0..6]);
-        msg[6] = (crc >> 8) as u8;   // CRC high byte
-        msg[7] = (crc & 0xFF) as u8; // CRC low byte
+        msg[6] = (crc & 0xFF) as u8; // CRC low byte
+        msg[7] = (crc >> 8) as u8;   // CRC high byte
 
         msg
     }
@@ -93,9 +93,9 @@ pub mod protocol {
             return None;
         }
 
-        // Verify CRC (over first 13 bytes, CRC in bytes 13-14 big-endian)
+        // Verify CRC (over first 13 bytes, CRC in bytes 13-14 little-endian)
         let crc_calc = calc_crc16(&data[0..13]);
-        let crc_recv = ((data[13] as u16) << 8) | (data[14] as u16);
+        let crc_recv = (data[13] as u16) | ((data[14] as u16) << 8);
         if crc_calc != crc_recv {
             return None;
         }

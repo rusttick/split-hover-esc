@@ -21,10 +21,25 @@
 - [x] pin find slave board XXX requires 15v power from main board or outside
 - [x] load main on slave board
 - [x] motor_control.py slave board XXX couldn't do speed 1000 for some reason... also wasn't sounding great
+- [ ] PA7 current sensor setting did NOT work on master!
+
+
+
+- [ ] wire up rp2040 for serial speed control
+
+
 
 
 - [ ] speed1.rs spins the motor
+
+
+
 - [ ] speed1.rs over rs485 bridge at 19200
+
+
+
+
+
 - [ ] get 2 boards with motors all talking over rs485 taking speed commands from rp2040
 - [ ] get 4 boards with motors all talking over rs485 taking speed commands from rp2040
 
@@ -48,10 +63,7 @@ Instructions for [Flashing the Razor board](doc/flash-razor.md).
 
 ## Flash rp2040
 
-how to flash this project onto rp2040 for controlling many hoverboard motors... ???
-
-![Pico W Pinout](doc/pico-w-pinout.png)
-
+Instructions for [Flashing the Raspberry Pi Pico W](doc/flash-rp2040.md).
 
 
 ## RS485 serial bus

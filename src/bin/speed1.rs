@@ -29,14 +29,14 @@ const BAUD_RATE: u32 = 19200;
 /// Slave ID to communicate with
 const SLAVE_ID: u8 = 1;
 
-/// Maximum speed value (±1000 = ±100%)
-const MAX_SPEED: i16 = 1000;
+/// Maximum speed value (±800 = ±80%)
+const MAX_SPEED: i16 = 800;
 
-/// Speed increment per step (10% = 100 units)
-const SPEED_STEP: i16 = 100;
+/// Speed increment per step (5% = 50 units)
+const SPEED_STEP: i16 = 50;
 
-/// Time between speed changes (750ms for 30s full cycle with 40 steps)
-const STEP_DELAY_MS: u64 = 750;
+/// Time between speed changes (400ms, matching motor_control.py)
+const STEP_DELAY_MS: u64 = 400;
 
 /// Timeout for waiting for response
 const RESPONSE_TIMEOUT_MS: u64 = 100;
