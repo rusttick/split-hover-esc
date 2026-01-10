@@ -1,6 +1,6 @@
 # Flash Raspberry Pi Pico W
 
-![pico w pinout](doc/pico-w-pinout.png)
+![pico w pinout](pico-w-pinout.png)
 
 
 ## Todo
