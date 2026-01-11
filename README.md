@@ -24,31 +24,27 @@
 - [x] PA7 current sensor setting did NOT work on master either!
 - [x] wire up rp2040 for serial speed control with rs485 adapters... works ok for quite some time, but has crashed
 - [x] speed0 sends speed=0 30 times per second over rs485 adapters. slave 2 times out occassionally... good enough
+- [x] update speed1.rs with findings from speed0 and then spin the motors!
+- [x] run the motor spinning loop from core 1
+- [x] add watchdog to main speed sending loop of speed1_core1.rs
 
-- [ ] add watchdog to main speed sending loop
-
-- [ ] update speed1.rs with findings from speed0 and then spin the motor!
-
-- [ ] test the RC receiver logging from rp2040
-
-
-
-
-
-
+- [ ] test the RC receiver logging from rp2040 in sbus_pio.rs
 
 - [ ] send fake telemetry to qgroundcontrol from a local python app
+
 - [ ] add wifi to speed1.rs
 
 
+
+- [ ] wire up a second pair of boards and motors!
+- [ ] start building the frame!
 
 
 - [ ] start listing the safety checks rp2040 can do: speed change limits, measure and limit battery current?
 
 
-- [ ] test pin 7 (PA7) as current sens pin on master!!
 
-- [ ] disable master power button and deal with latch????
+- [ ] replace master power button with rp2040 gpio pin ???
 - [ ] xt30 power connectors
 
 - [ ] determine if wifi control will be adequate or if the RC protocol is required.
@@ -77,6 +73,70 @@ Instructions for [Flashing the Raspberry Pi Pico W](doc/flash-rp2040.md).
  - contains: https://www.ti.com/lit/ds/symlink/iso7741.pdf
  - and MAX485CSA+  https://www.analog.com/media/en/technical-documentation/data-sheets/max1487-max491.pdf
  - there should not be any protocol changes required. the rs485 chips have auto flow control
+
+
+## RadioLink TS8 and R8EF:
+
+```
+    old channel config read PPM input from RC controller
+    ch1  //
+    ch2  // steer right
+    ch3  // steer left
+    ch4  //
+    ch5  // engine enable
+    ch6  // engine start
+    ch7  // enable steering
+    ch8  //
+```
+
+## Old Mower Layout
+
+```
+  Track Module:
+   - large battery
+   - 2 motors
+   - 2 drivers
+   - battery voltage sensor?? or accurate reading from board??
+   - acs758 battery current sensor ??
+   - single aviation connector
+
+  20v battery for engine and control modules
+
+  Control module:
+   - 5v buck converter
+   - raspberry pi pico W
+   - 3x rs485 to serial adapters (left, right, engine)
+   - RadioLink R8EF
+   - level shift module for engine relays
+
+  Engine Module:
+   - 12v buck for relay coils
+   - small relays:
+     start: 5v switches 12v big relay coil on
+     enable: 5v switches off spark plug ground wire (that normally stops the engine)
+   - big relay: 20v engine start
+   - flyback diode (stripe +) across big relay coil
+
+
+  Mower Run Procedure:
+  - attach all batteries
+  - power on remote
+  - enable controlls with red switch on mower??
+  - steer mower: ch2, ch3
+  - set deck height: roll ch8 to desired height?
+  - enable engine start
+  - hold starter till engine starts, then release
+  - leave engine on, but lock starter
+  - mow
+  - bumper stops engine and wheels and waits for a change to ???
+  - stop engine: ch5 = down
+    skid steer and set deck height
+  - disable controlls with red switch on mower
+  - power off remote
+  - remove batteries
+```
+
+
 
 
 ## Notes to my future self in chronological order

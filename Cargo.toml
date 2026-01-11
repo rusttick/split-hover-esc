@@ -32,10 +32,14 @@ static_cell = "2.1"
 portable-atomic = { version = "1.11.1", features = ["critical-section"] }
 heapless = "0.8"
 critical-section = "1.2.0"
+fixed = "1.28"
 
 # I/O
 embedded-io = { version = "0.7.1", features = ["defmt"] }
 embedded-io-async = { version = "0.6.1", features = ["defmt-03"] }
+
+# S.BUS protocol parser
+sbus-rs = { version = "0.1", default-features = false }
 
 [profile.release]
 debug = 2

@@ -1,9 +1,13 @@
-//! Remote UART Bus Speed Test (Dual Slave)
+//! Remote UART Bus Speed Test (Dual Slave, Core 1)
 //!
 //! Tests the hoverboard motor controller using the Remote UART Bus protocol.
 //! Sends the same speed commands to both slave 1 and slave 2.
 //! Ramps speed from 0 to max forward, then cycles between max forward and
 //! max backward continuously.
+//!
+//! Multicore architecture:
+//! - Core 0: Idle (available for future use)
+//! - Core 1: UART speed control loop
 //!
 //! Hardware:
 //! - UART1 TX: GP4 (connect to MAX485 DI)
@@ -13,13 +17,20 @@
 #![no_std]
 #![no_main]
 
+use core::ptr::addr_of_mut;
+
 use defmt::{error, info, warn};
-use embassy_executor::Spawner;
+use embassy_executor::Executor;
 use embassy_rp::gpio::{Level, Output};
+use embassy_rp::multicore::{spawn_core1, Stack};
+use embassy_rp::peripherals::{DMA_CH0, DMA_CH1, PIN_25, PIN_4, PIN_5, UART1, WATCHDOG};
 use embassy_rp::uart::{Config as UartConfig, Uart};
+use embassy_rp::watchdog::Watchdog;
+use embassy_rp::Peri;
 use embassy_time::{Duration, Timer, with_timeout};
 use panic_probe as _;
 use rtt_target::rtt_init_defmt;
+use static_cell::StaticCell;
 
 use split_hover_esc::Irqs;
 use split_hover_esc::protocol::{self, Response};
@@ -27,7 +38,7 @@ use split_hover_esc::protocol::{self, Response};
 /// UART baud rate (must match hoverboard firmware)
 const BAUD_RATE: u32 = 19200;
 
-/// Maximum speed value (±500 = ±50%)
+/// Maximum speed value (±800 = ±80%)
 const MAX_SPEED: i16 = 500;
 
 /// Speed increment per step (5% = 50 units)
@@ -38,6 +49,14 @@ const STEP_DELAY_MS: u64 = 400;
 
 /// Timeout for waiting for response
 const RESPONSE_TIMEOUT_MS: u64 = 100;
+
+/// Watchdog timeout (must be longer than one loop iteration)
+const WATCHDOG_TIMEOUT_MS: u64 = 2000;
+
+// Multicore statics
+static mut CORE1_STACK: Stack<65536> = Stack::new();
+static EXECUTOR0: StaticCell<Executor> = StaticCell::new();
+static EXECUTOR1: StaticCell<Executor> = StaticCell::new();
 
 /// Send a speed command and print what we're sending
 async fn send_speed_command(
@@ -119,36 +138,40 @@ async fn receive_response(uart: &mut Uart<'_, embassy_rp::uart::Async>) -> Optio
     }
 }
 
-#[embassy_executor::main]
-async fn main(_spawner: Spawner) {
-    // Initialize RTT with BlockIfFull mode and 64KB buffer
-    rtt_init_defmt!(rtt_target::ChannelMode::BlockIfFull, 65536);
+/// Speed control task - runs on Core 1
+#[embassy_executor::task]
+async fn speed_task(
+    uart1: Peri<'static, UART1>,
+    pin_4: Peri<'static, PIN_4>,
+    pin_5: Peri<'static, PIN_5>,
+    dma_ch0: Peri<'static, DMA_CH0>,
+    dma_ch1: Peri<'static, DMA_CH1>,
+    pin_25: Peri<'static, PIN_25>,
+    watchdog: Peri<'static, WATCHDOG>,
+) -> ! {
+    info!("Core 1: speed_task starting");
 
-    info!("=== Remote UART Bus Speed Test (Dual Slave) ===");
-    info!(
-        "Baud: {} | Slaves: 1, 2 | Max speed: +/-{}",
-        BAUD_RATE, MAX_SPEED
-    );
-
-    // Initialize peripherals
-    let p = embassy_rp::init(Default::default());
+    // Initialize and start watchdog timer
+    let mut watchdog = Watchdog::new(watchdog);
+    watchdog.start(Duration::from_millis(WATCHDOG_TIMEOUT_MS));
+    info!("Watchdog started with {}ms timeout", WATCHDOG_TIMEOUT_MS);
 
     // Configure UART1 on GP4 (TX) and GP5 (RX) for MAX485 RS-485 transceiver
     let mut uart_config = UartConfig::default();
     uart_config.baudrate = BAUD_RATE;
 
     let mut uart = Uart::new(
-        p.UART1,
-        p.PIN_4, // TX -> MAX485 DI
-        p.PIN_5, // RX <- MAX485 RO
+        uart1,
+        pin_4,  // TX -> MAX485 DI
+        pin_5,  // RX <- MAX485 RO
         Irqs,
-        p.DMA_CH0,
-        p.DMA_CH1,
+        dma_ch0,
+        dma_ch1,
         uart_config,
     );
 
-    // Optional: LED on GP25 for visual feedback (Pico onboard LED)
-    let mut led = Output::new(p.PIN_25, Level::Low);
+    // LED on GP25 for visual feedback (Pico onboard LED)
+    let mut led = Output::new(pin_25, Level::Low);
 
     info!("Starting speed ramp test...");
     info!("Phase 1: Ramp from 0 to {}% forward", MAX_SPEED / 10);
@@ -159,6 +182,7 @@ async fn main(_spawner: Spawner) {
     // Phase 1: Ramp from 0 to max forward
     let mut speed: i16 = 0;
     while speed <= MAX_SPEED {
+        watchdog.feed();
         led.set_high();
 
         // Send to slave 1
@@ -182,6 +206,8 @@ async fn main(_spawner: Spawner) {
     speed = MAX_SPEED;
 
     loop {
+        watchdog.feed();
+
         // Move speed in current direction
         speed += direction * SPEED_STEP;
 
@@ -210,4 +236,61 @@ async fn main(_spawner: Spawner) {
 
         Timer::after(Duration::from_millis(STEP_DELAY_MS)).await;
     }
+}
+
+/// Core 0 idle task
+#[embassy_executor::task]
+async fn core0_idle_task() -> ! {
+    info!("Core 0: idle task running");
+    loop {
+        Timer::after_secs(60).await;
+    }
+}
+
+/// Entry point - sets up multicore execution
+#[cortex_m_rt::entry]
+fn main() -> ! {
+    // Initialize RTT with BlockIfFull mode and 64KB buffer
+    rtt_init_defmt!(rtt_target::ChannelMode::BlockIfFull, 65536);
+
+    info!("=== Remote UART Bus Speed Test (Dual Slave, Core 1) ===");
+    info!(
+        "Baud: {} | Slaves: 1, 2 | Max speed: +/-{}",
+        BAUD_RATE, MAX_SPEED
+    );
+
+    // Initialize peripherals
+    let p = embassy_rp::init(Default::default());
+
+    // ========== Core 1 peripherals (speed control) ==========
+    let uart1 = p.UART1;
+    let pin_4 = p.PIN_4;
+    let pin_5 = p.PIN_5;
+    let dma_ch0 = p.DMA_CH0;
+    let dma_ch1 = p.DMA_CH1;
+    let pin_25 = p.PIN_25;
+    let watchdog = p.WATCHDOG;
+
+    // ========== Spawn Core 1 (speed task) ==========
+    info!("spawning Core 1 for speed task");
+    spawn_core1(
+        p.CORE1,
+        unsafe { &mut *addr_of_mut!(CORE1_STACK) },
+        move || {
+            info!("Core 1: executor starting");
+            let executor1 = EXECUTOR1.init(Executor::new());
+            executor1.run(|spawner| {
+                spawner
+                    .spawn(speed_task(uart1, pin_4, pin_5, dma_ch0, dma_ch1, pin_25, watchdog))
+                    .unwrap();
+            });
+        },
+    );
+
+    // ========== Run Core 0 executor ==========
+    info!("Core 0: executor starting");
+    let executor0 = EXECUTOR0.init(Executor::new());
+    executor0.run(|spawner| {
+        spawner.spawn(core0_idle_task()).unwrap();
+    });
 }
