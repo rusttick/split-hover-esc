@@ -36,16 +36,16 @@ bind_interrupts!(struct Irqs {
 const BAUD_RATE: u32 = 19200;
 
 /// Maximum speed value (±500 = ±50%)
-const MAX_SPEED: i16 = 600;
+const MAX_SPEED: i16 = 800;
 
-/// Speed increment per step (5% = 50 units)
-const SPEED_STEP: i16 = 50;
+/// Speed increment per step (smaller steps = smoother acceleration)
+const SPEED_STEP: i16 = 5;
 
-/// Time between speed changes (400ms, matching motor_control.py)
-const STEP_DELAY_MS: u64 = 500;
+/// Time between speed changes (100ms with step=10 gives same rate as 500ms with step=50)
+const STEP_DELAY_MS: u64 = 100;
 
-/// Timeout for waiting for response
-const RESPONSE_TIMEOUT_MS: u64 = 100;
+/// Timeout for waiting for response (increased for reliability)
+const RESPONSE_TIMEOUT_MS: u64 = 150;
 
 /// Send a speed command (silent)
 async fn send_speed_command<TX: Write>(uart_tx: &mut TX, slave_id: u8, speed: i16, state: u8) {
