@@ -14,7 +14,7 @@
 #![no_std]
 #![no_main]
 
-use defmt::{error, info, warn};
+use defmt::{info, warn};
 use embassy_executor::Spawner;
 use embassy_rp::bind_interrupts;
 use embassy_rp::gpio::{Level, Output};
@@ -36,88 +36,90 @@ bind_interrupts!(struct Irqs {
 const BAUD_RATE: u32 = 19200;
 
 /// Maximum speed value (±500 = ±50%)
-const MAX_SPEED: i16 = 500;
+const MAX_SPEED: i16 = 600;
 
 /// Speed increment per step (5% = 50 units)
 const SPEED_STEP: i16 = 50;
 
 /// Time between speed changes (400ms, matching motor_control.py)
-const STEP_DELAY_MS: u64 = 400;
+const STEP_DELAY_MS: u64 = 500;
 
 /// Timeout for waiting for response
 const RESPONSE_TIMEOUT_MS: u64 = 100;
 
-/// Send a speed command and print what we're sending
+/// Send a speed command (silent)
 async fn send_speed_command<TX: Write>(uart_tx: &mut TX, slave_id: u8, speed: i16, state: u8) {
     let msg = protocol::build_speed_msg(slave_id, speed, state);
-
-    info!(
-        "TX: slave={} speed={} state=0x{:02X}",
-        slave_id, speed, state
-    );
-    info!(
-        "    raw: {:02X} {:02X} {:02X} {:02X} {:02X} {:02X} {:02X} {:02X}",
-        msg[0], msg[1], msg[2], msg[3], msg[4], msg[5], msg[6], msg[7]
-    );
-
-    if let Err(_) = uart_tx.write_all(&msg).await {
-        error!("PIO UART write error");
-    }
+    let _ = uart_tx.write_all(&msg).await;
 }
 
-/// Try to receive and parse a response, with timeout
+/// Try to receive and parse a response, with timeout (silent)
 async fn receive_response<RX: Read>(uart_rx: &mut RX) -> Option<Response> {
     let mut buf = [0u8; protocol::RESPONSE_SIZE];
 
-    // Read with timeout
     let result = with_timeout(Duration::from_millis(RESPONSE_TIMEOUT_MS), async {
         uart_rx.read_exact(&mut buf).await
     })
     .await;
 
     match result {
-        Ok(Ok(())) => {
-            info!(
-                "RX raw: {:02X} {:02X} {:02X} {:02X} {:02X} {:02X} {:02X} {:02X} {:02X} {:02X} {:02X} {:02X} {:02X} {:02X} {:02X}",
-                buf[0],
-                buf[1],
-                buf[2],
-                buf[3],
-                buf[4],
-                buf[5],
-                buf[6],
-                buf[7],
-                buf[8],
-                buf[9],
-                buf[10],
-                buf[11],
-                buf[12],
-                buf[13],
-                buf[14]
-            );
+        Ok(Ok(())) => protocol::parse_response(&buf),
+        _ => None,
+    }
+}
 
-            match protocol::parse_response(&buf) {
-                Some(resp) => {
-                    info!(
-                        "RX: slave={} speed={} voltage={}mV current={}cA odom={}",
-                        resp.slave_id, resp.speed, resp.voltage_mv, resp.current_ca, resp.odometer
-                    );
-                    Some(resp)
-                }
-                None => {
-                    warn!("RX: invalid response (bad start frame or CRC)");
-                    None
-                }
-            }
+/// Send to both slaves and print one summary line
+async fn send_to_both_and_report<TX: Write, RX: Read>(
+    uart_tx: &mut TX,
+    uart_rx: &mut RX,
+    speed: i16,
+    state: u8,
+) {
+    // Send to slave 1
+    send_speed_command(uart_tx, 1, speed, state).await;
+    let resp1 = receive_response(uart_rx).await;
+
+    // Send to slave 2
+    send_speed_command(uart_tx, 2, speed, state).await;
+    let resp2 = receive_response(uart_rx).await;
+
+    // Convert response speed to RPM (response_speed / 10 = RPM for 30P motor)
+    let rpm1: i16;
+    let rpm2: i16;
+    let mut timeout_warning = false;
+
+    match resp1 {
+        Some(r) => rpm1 = r.speed / 10,
+        None => {
+            rpm1 = -999;
+            timeout_warning = true;
         }
-        Ok(Err(_)) => {
-            warn!("PIO UART read error");
-            None
+    }
+
+    match resp2 {
+        Some(r) => rpm2 = r.speed / 10,
+        None => {
+            rpm2 = -999;
+            timeout_warning = true;
         }
-        Err(_) => {
-            warn!("RX: timeout (no response within {}ms)", RESPONSE_TIMEOUT_MS);
-            None
-        }
+    }
+
+    // Get voltage/current from slave 1
+    let (voltage, current) = match resp1 {
+        Some(r) => (r.voltage_mv, r.current_ca),
+        None => (0, 0),
+    };
+
+    if timeout_warning {
+        warn!(
+            "target={} rpm1={} rpm2={} V={}mV I={}cA (TIMEOUT)",
+            speed, rpm1, rpm2, voltage, current
+        );
+    } else {
+        info!(
+            "target={} rpm1={} rpm2={} V={}mV I={}cA",
+            speed, rpm1, rpm2, voltage, current
+        );
     }
 }
 
@@ -168,15 +170,7 @@ async fn main(_spawner: Spawner) {
     let mut speed: i16 = 0;
     while speed <= MAX_SPEED {
         led.set_high();
-
-        // Send to slave 1
-        send_speed_command(&mut uart_tx, 1, speed, state).await;
-        let _resp1 = receive_response(&mut uart_rx).await;
-
-        // Send to slave 2
-        send_speed_command(&mut uart_tx, 2, speed, state).await;
-        let _resp2 = receive_response(&mut uart_rx).await;
-
+        send_to_both_and_report(&mut uart_tx, &mut uart_rx, speed, state).await;
         led.set_low();
 
         Timer::after(Duration::from_millis(STEP_DELAY_MS)).await;
@@ -205,15 +199,7 @@ async fn main(_spawner: Spawner) {
         }
 
         led.set_high();
-
-        // Send to slave 1
-        send_speed_command(&mut uart_tx, 1, speed, state).await;
-        let _resp1 = receive_response(&mut uart_rx).await;
-
-        // Send to slave 2
-        send_speed_command(&mut uart_tx, 2, speed, state).await;
-        let _resp2 = receive_response(&mut uart_rx).await;
-
+        send_to_both_and_report(&mut uart_tx, &mut uart_rx, speed, state).await;
         led.set_low();
 
         Timer::after(Duration::from_millis(STEP_DELAY_MS)).await;

@@ -27,12 +27,17 @@
 - [x] update speed1.rs with findings from speed0 and then spin the motors!
 - [x] run the motor spinning loop from core 1
 - [x] add watchdog to main speed sending loop of speed1_core1.rs
+- [x] test the RC receiver logging from rp2040 in sbus_pio.rs
 
-- [ ] test the RC receiver logging from rp2040 in sbus_pio.rs
+- [ ] troubleshoot jerkey speed changes when ramping speed?  try speed1 with minimum steps at different frequencies
+      XXX the slave driver board flips out each time a timeout is registered from it!!! XXX
 
-- [ ] send fake telemetry to qgroundcontrol from a local python app
+
 
 - [ ] add wifi to speed1.rs
+- [ ] send fake telemetry to qgroundcontrol from a local python app
+
+
 
 
 

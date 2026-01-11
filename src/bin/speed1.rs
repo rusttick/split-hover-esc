@@ -28,7 +28,7 @@ use split_hover_esc::protocol::{self, Response};
 const BAUD_RATE: u32 = 19200;
 
 /// Maximum speed value (±500 = ±50%)
-const MAX_SPEED: i16 = 500;
+const MAX_SPEED: i16 = 1000;
 
 /// Speed increment per step (5% = 50 units)
 const SPEED_STEP: i16 = 50;
